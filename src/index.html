@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chat</title>
+  </head>
+  <body>
+    <div class="root">
+      <div class="messenger">
+        <div class="messenger__container">
+       
+          <div class="messenger__main-col chat">
+              <div class="chat__topbar topbar">
+                <div class="topbar__info user">
+                  <div class="user__avatar">
+                    <img src="./images/storage.png" alt="">
+                  </div>
+                  <div class="user__info">
+                    <div class="user__name">Organizer Bot</div>
+                    <div class="user__last-seen">Bot</div>
+                  </div>
+                </div>
+                <div class="topbar__utils">
+                  <button type="button" class="topbar__btn btn-search">
+                    <img src="./images/Search.svg" alt="">
+                  </button>
+                  <button class="topbar__btn btn-more">
+                    <img src="./images/More.svg" alt="">
+                  </button>
+                </div>
+              </div>
+              <div class="chat__container">
+                <div class="chat__messages">
+                  <div class="messages">
+                    <div class="messages__container">
+                      <div class="message">
+                        <div class="chat__message message ${isUser ? 'message-user' : ''}">
+                          <div class="message__data">
+                            <div class="message__sender">${isUser ? 'You' : user.name},</div>
+                            <div class="message__date">${time} ${date}</div>
+                          </div>
+                          <div class="message__content">${message}</div>
+                        </div>
+                      </div>
+                      <div class="message">
+                        <div class="chat__message message ${isUser ? 'message-user' : ''}">
+                          <div class="message__data">
+                            <div class="message__sender">${isUser ? 'You' : user.name},</div>
+                            <div class="message__date">${time} ${date}</div>
+                          </div>
+                          <div class="message__content">${message}</div>
+                        </div>
+                      </div>
+                      <div class="message">
+                        <div class="chat__message message ${isUser ? 'message-user' : ''}">
+                          <div class="message__data">
+                            <div class="message__sender">${isUser ? 'You' : user.name},</div>
+                            <div class="message__date">${time} ${date}</div>
+                          </div>
+                          <div class="message__content">${message}</div>
+                        </div>
+                      </div>
+                      <div class="message message-user">
+                        <div class="chat__message message ${isUser ? 'message-user' : ''}">
+                          <div class="message__data">
+                            <div class="message__sender">${isUser ? 'You' : user.name},</div>
+                            <div class="message__date">${time} ${date}</div>
+                          </div>
+                          <div class="message__content">${message}</div>
+                        </div>
+                      </div>
+                      <div class="message">
+                        <div class="chat__message message ${isUser ? 'message-user' : ''}">
+                          <div class="message__data">
+                            <div class="message__sender">${isUser ? 'You' : user.name},</div>
+                            <div class="message__date">${time} ${date}</div>
+                          </div>
+                          <div class="message__content">${message}</div>
+                        </div>
+                      </div>
+                      <div class="message">
+                        <div class="chat__message message ${isUser ? 'message-user' : ''}">
+                          <div class="message__data">
+                            <div class="message__sender">${isUser ? 'You' : user.name},</div>
+                            <div class="message__date">${time} ${date}</div>
+                          </div>
+                          <div class="message__content">${message}</div>
+                        </div>
+                      </div>
+                      <div class="message">
+                        <div class="chat__message message ${isUser ? 'message-user' : ''}">
+                          <div class="message__data">
+                            <div class="message__sender">${isUser ? 'You' : user.name},</div>
+                            <div class="message__date">${time} ${date}</div>
+                          </div>
+                          <div class="message__content">${message}</div>
+                        </div>
+                      </div>
+                      <div class="message">
+                        <div class="chat__message message ${isUser ? 'message-user' : ''}">
+                          <div class="message__data">
+                            <div class="message__sender">${isUser ? 'You' : user.name},</div>
+                            <div class="message__date">${time} ${date}</div>
+                          </div>
+                          <div class="message__content">${message}</div>
+                        </div>
+                      </div>
+                      <div class="message">
+                        <div class="chat__message message ${isUser ? 'message-user' : ''}">
+                          <div class="message__data">
+                            <div class="message__sender">${isUser ? 'You' : user.name},</div>
+                            <div class="message__date">${time} ${date}</div>
+                          </div>
+                          <div class="message__content">${message}</div>
+                        </div>
+                      </div>
+                      <div class="message message-user">
+                        <div class="chat__message message ${isUser ? 'message-user' : ''}">
+                          <div class="message__data">
+                            <div class="message__sender">${isUser ? 'You' : user.name},</div>
+                            <div class="message__date">${time} ${date}</div>
+                          </div>
+                          <div class="message__content">${message}</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                </div>
+              <div class="chat__bottombar bottombar">
+                <div class="bottombar__field">
+                  <button type="button" class="bottombar__bot-menu">
+                    <img src="./images/Bot menu.svg" alt="">
+                  </button>
+                  <button type="button" class="field-btn btn-attach">
+                    <img src="./images/Attach.svg" alt="">
+                  </button>
+                  <input name="" class="bottombar__input" placeholder="Type your message here"/>
+                  <button type="button" class=" field-btn btn-emoji">
+                    <img src="./images/Emoji.svg" alt="">
+                  </button>
+                </div>
+                <button class="bottombar__btn  btn-send">
+                  <span class="bottombar__btn-icon">
+                    <img src="./images/Send-1.svg" alt="">
+                  </span>
+                  
+                </button>
+                <button class="bottombar__btn  btn-record">
+                  <span class="bottombar__btn-icon">
+                    <img src="./images/Mic.svg" alt="">
+                  </span>
+                </button>
+              </div>
+              </div>
+              
+           
+  
+            
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+      // Автоматическое пролистывание чата вниз
+  window.onload = function () {
+    const messages = document.querySelector('.messages')
+    messages.scrollBy({
+      top: messages.scrollHeight,
+      left: 0,
+      behavior: 'smooth',
+    });
+  } 
+
+
+    </script>
+  </body>
+</html>
+
+<!-- <div class="chat__messages"></div>
+          <div class="chat__field">
+            <input name="" class="chat__input" placeholder="Type your message here"/>
+            <button class="chat__btn-send">
+              <span class="chat__btn-icon">
+                <img src="./images/Send.svg" alt="">
+              </span>
+            </button>
+          </div> -->
+
+           <!-- <div class="chat__list">
+          <ul class="chat__users">
+          </ul>
+
+          <button class="chat__btn-exit">Log out</button>
+        </div> -->
+
