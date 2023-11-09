@@ -1,4 +1,4 @@
-import SidebarApi from "./api/SidebarApi";
+import SidebarApi from './api/SidebarApi';
 
 export default class Sidebar {
   constructor(container) {
@@ -27,13 +27,13 @@ export default class Sidebar {
 
   loadStorage(e) {
     e.preventDefault();
-// debugger;
+    // debugger;
     const { target } = e;
     const tab = target.closest('.tabs__tab');
 
     if (!tab) return;
     const tabs = this.tabs.querySelectorAll('.tabs__tab');
-    tabs.forEach(tab => tab.classList.remove('tabs__tab_active'));
+    tabs.forEach((tabEl) => tabEl.classList.remove('tabs__tab_active'));
 
     tab.classList.add('tabs__tab_active');
     const { name } = tab.dataset;
@@ -45,9 +45,9 @@ export default class Sidebar {
         response.links.forEach((link) => this.showLinks(link));
       }
       if (response.files) {
-        response.files.forEach(file => this.showMedia(file));
+        response.files.forEach((file) => this.showMedia(file));
       }
-    })
+    });
   }
 
   showLinks(item) {
@@ -63,7 +63,7 @@ export default class Sidebar {
   }
 
   showMedia(item) {
-    this.storage.classList.add('storage-media')
+    this.storage.classList.add('storage-media');
     const el = document.createElement('div');
     el.classList.add('storage__item', 'storage__file');
     el.innerHTML = `

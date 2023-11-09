@@ -12,7 +12,7 @@ export default class SidebarApi {
       method: 'GET',
     })
       .then((result) => {
-        console.log(result); callback(result)
+        console.log(result); callback(result);
       })
       .catch((e) => {
         console.error('Произошла ошибка: ', e);

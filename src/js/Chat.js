@@ -38,7 +38,7 @@ export default class Chat {
       if (e.key !== 'Enter') return;
       this.sendMessage(e);
     });
-    
+
     this.btnSendMessage.addEventListener('click', this.sendMessage);
 
     this.chatContainer.addEventListener('dragover', (e) => this.showPlaceholderForFile(e));
@@ -59,11 +59,11 @@ export default class Chat {
   sendMessage(e) {
     e.preventDefault();
     const message = this.inputMessage.value;
-    
+
     if (!message) return;
 
     const links = this.searchLinks(message);
-    
+
     const data = {
       type: 'textMessage',
       user: {
@@ -72,7 +72,7 @@ export default class Chat {
       message,
       links,
     };
-    
+
     this.api.webSocket.send(JSON.stringify(data));
     this.inputMessage.value = '';
   }
@@ -83,7 +83,7 @@ export default class Chat {
 
     const links = [];
 
-    fragments.forEach(fragment => {
+    fragments.forEach((fragment) => {
       const isLink = /^https?:\/\//.test(fragment);
 
       if (!isLink) return;
@@ -103,7 +103,7 @@ export default class Chat {
 
     return textWithLinks;
   }
-  
+
   createMessage(data) {
     if (data.type === 'textMessage') {
       this.renderMessage(data);
@@ -112,7 +112,7 @@ export default class Chat {
       console.log(data);
       this.renderImg(data);
     }
-    
+
     this.scrollChat();
   }
 
@@ -125,7 +125,7 @@ export default class Chat {
     } else {
       text = message.text;
     }
-   
+
     const messageHTML = `
       <div class="message ${isUser ? 'message-user' : ''}" data-id="${message.id}">
         <div class="message__container">
@@ -144,7 +144,7 @@ export default class Chat {
 
   renderImg({ user, files, message }) {
     const isUser = user.name === 'user';
-// debugger;
+    // debugger;
     const messageEl = document.createElement('div');
     messageEl.setAttribute('data-id', message.id);
     const additionalClass = isUser ? 'message-user' : '';
@@ -163,7 +163,7 @@ export default class Chat {
     this.messagesContainer.append(messageEl);
     this.imagesWrapper = messageEl.querySelector('.message__images');
 
-    files.forEach(file => {
+    files.forEach((file) => {
       const el = document.createElement('div');
       el.classList.add('message__img');
       el.setAttribute('data-id', file.id);

@@ -1,4 +1,4 @@
-import ChatAPI from "./api/ChatAPI";
+import ChatAPI from './api/ChatAPI';
 
 export default class Popover {
   constructor() {
