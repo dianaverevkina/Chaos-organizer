@@ -1,18 +1,16 @@
-import createRequest from './createRequest';
-
 export default class ChatAPI {
   constructor() {
-    this.url = 'https://chat-backend-ff5v.onrender.com';
+    this.url = 'http://localhost:3000';
+    this.webSocket = new WebSocket('ws://localhost:3000/ws');
   }
 
-  async createUser(userName) {
-    const url = `${this.url}/new-user`;
-    const options = {
-      url,
-      method: 'POST',
-      data: userName,
-    };
-    const result = await createRequest(options);
-    return result;
+  // Подписываемя на события websocket
+  subscribeOnEvents(callback) {
+    this.webSocket.addEventListener('open', () => console.log('open'));
+    this.webSocket.addEventListener('message', (e) => {
+      const data = JSON.parse(e.data);
+      console.log(data);
+      callback(data);
+    });
   }
 }

@@ -1,2 +1,2 @@
 import './scss/chat.scss';
-// import './js/app';
+import './js/app';
