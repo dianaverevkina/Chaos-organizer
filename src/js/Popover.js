@@ -12,6 +12,7 @@ export default class Popover {
 
     this.filesContainer = this.popover.querySelector('.popover__files');
     this.form = this.popover.querySelector('.form');
+    this.inputFileDesc = this.popover.querySelector('[name="file-desc"]');
     this.btnClose = this.popover.querySelector('.popover__btn-close');
 
     this.addEvents();
@@ -31,15 +32,11 @@ export default class Popover {
           <img src="./images/Cross.svg" alt="">
         </button>
         <h2 class="popover__header">Send Photo</h2>
-        <div class="popover__files">
-          <div class="popover__file-preview">
-            <img src="./images/Bot menu.svg" alt="">
-          </div>
-        </div>
+        <div class="popover__files"></div>
 
         <form class="popover__form form">
           <label class="form__field">
-            <input type="text" name="name" class="form__input" placeholder="Add a caption">
+            <input type="text" name="file-desc" class="form__input" placeholder="Add a caption">
           </label>
           <button class="form__btn btn-send-file">Send</button>
         </form>
@@ -66,8 +63,9 @@ export default class Popover {
 
     const preview = document.createElement('div');
     preview.classList.add('popover__file-preview');
-    preview.innerHTML = `<img src="${url}" alt="">`;
-
+    preview.innerHTML = file.type.includes('image') ? `<img src="${url}" alt="">` 
+      : `<video src="${url}" controls ><video />`;
+  
     this.filesContainer.append(preview);
 
     // // debugger;
@@ -75,6 +73,7 @@ export default class Popover {
       path: url,
       name: file.name,
       type: file.type,
+      size: file.size,
     };
 
     this.filesForSend.push(sendFile);
@@ -84,6 +83,7 @@ export default class Popover {
     e.preventDefault();
     this.popover.remove();
     this.popover = null;
+    let caption = this.inputFileDesc.value;
     // debugger;
     const data = {
       type: 'file',
@@ -91,9 +91,11 @@ export default class Popover {
         name: 'user',
       },
       files: this.filesForSend,
+      message: caption,
     };
 
     this.api.webSocket.send(JSON.stringify(data));
+    caption = '';
 
     this.filesForSend = [];
   }

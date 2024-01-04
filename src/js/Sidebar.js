@@ -44,8 +44,15 @@ export default class Sidebar {
         // debugger;
         response.links.forEach((link) => this.showLinks(link));
       }
+      if (response.media) {
+        console.log('files')
+        if (!response.media) return;
+        response.media.forEach((file) => this.showMedia(file));
+      }
       if (response.files) {
-        response.files.forEach((file) => this.showMedia(file));
+        console.log('files')
+        if (!response.files) return;
+        response.files.forEach((file) => this.showFiles(file));
       }
     });
   }
@@ -63,12 +70,33 @@ export default class Sidebar {
   }
 
   showMedia(item) {
+    console.log(item)
     this.storage.classList.add('storage-media');
     const el = document.createElement('div');
-    el.classList.add('storage__item', 'storage__file');
+    el.classList.add('storage__item', 'storage__media');
     el.innerHTML = `
       <div class="storage__img">
-        <img src="${item.path}" alt="${item.fileName}">
+        ${item.type.includes('video') ? `<video src=${item.path}><video />` : `<img src=${item.path} src=${item.path}/>`}
+      </div>
+    `;
+
+    this.storage.prepend(el);
+  }
+
+  showFiles(item) {
+    const el = document.createElement('a');
+    el.classList.add('storage__item', 'storage__download');
+    el.href = item.path;
+    el.download = true;
+    el.innerHTML = `
+      
+      <div class="storage__file">
+        ${item.type.includes('video') ? `<video src=${item.path}><video />` : `<img src=${item.path} />`}
+      
+      </div>
+      <div class="storage__file-desc">
+        <p>${item.fileName}</p>
+        <p>${item.size} . ${item.fullDate}</p>
       </div>
     `;
 

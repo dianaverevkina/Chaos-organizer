@@ -7,19 +7,21 @@ export default class Chat {
       throw new Error('container is not HTMLElement');
     }
     this.container = container;
+    this.start = true;
 
     this.api = new ChatAPI();
     this.popover = new Popover();
 
     this.sendMessage = this.sendMessage.bind(this);
     this.createMessage = this.createMessage.bind(this);
+    this.scrollMessages = this.scrollMessages.bind(this);
   }
 
   init() {
     this.bindToDOM();
-    this.scrollChat();
     this.registerEvents();
     this.api.subscribeOnEvents(this.createMessage);
+    // this.scrollChat();
   }
 
   bindToDOM() {
@@ -27,11 +29,13 @@ export default class Chat {
     this.messages = this.container.querySelector('.messages');
     this.messagesContainer = this.container.querySelector('.messages__container');
     this.inputMessage = this.container.querySelector('[name="text-message"]');
+    this.inputFiles = this.container.querySelector('[name="loader-files"]');
     this.btnSendMessage = this.container.querySelector('.btn-send-message');
     this.btnOpenSidebar = this.container.querySelector('.btn-more');
+    this.btnAttachFile = this.container.querySelector('.btn-attach');
   }
 
-  // Добавяем обработчики событий для popover
+  // Добавяем обработчики событий
   registerEvents() {
     this.btnOpenSidebar.addEventListener('click', (e) => this.showSidebar(e));
     this.inputMessage.addEventListener('keydown', (e) => {
@@ -43,11 +47,19 @@ export default class Chat {
 
     this.chatContainer.addEventListener('dragover', (e) => this.showPlaceholderForFile(e));
 
-    // this.chatContainer.addEventListener('dragleave', () => {
-    //   // this.placeholderForFiles.remove();
-    // });
-
     this.chatContainer.addEventListener('drop', (e) => this.showPopoverWithPreviews(e));
+    this.btnAttachFile.addEventListener('click', (e) => {
+      e.preventDefault();
+
+      this.inputFiles.value = '';
+      this.inputFiles.dispatchEvent(new MouseEvent('click'));
+    });
+    this.inputFiles.addEventListener('change', (e) => {
+      const { files } = e.target;
+      if (files.length === 0) return;
+      this.popover.showPopover(files);
+    });
+    this.addScrollEvent();
   }
 
   showSidebar(e) {
@@ -103,9 +115,40 @@ export default class Chat {
 
     return textWithLinks;
   }
+  
+  scrollMessages() {
+    const lastMessage = this.messagesContainer.querySelector('.message')
+    const data = {
+      type: 'load',
+      user: {
+        name: 'user',
+      },
+      index: lastMessage.dataset.id,
+    };
+  
+    this.api.webSocket.send(JSON.stringify(data));
+  }
+
+  addScrollEvent() {
+    this.messagesContainer.addEventListener('scroll', () => {
+      if (this.messagesContainer.scrollTop === 0) {
+        this.scrollMessages();
+      }
+    });
+  }
 
   createMessage(data) {
+    if (data.type === 'load') {
+      console.log(data.messages)
+      data.messages.forEach(mes => this.renderMessage({message: mes, user: data.user, links: [], type: data.type}));
+      if (this.start) {
+        this.scrollChat();
+        this.start = false;
+      }
+      return;
+    }
     if (data.type === 'textMessage') {
+      console.log(data)
       this.renderMessage(data);
     }
     if (data.type === 'file') {
@@ -116,7 +159,7 @@ export default class Chat {
     this.scrollChat();
   }
 
-  renderMessage({ user, message, links }) {
+  renderMessage({ user, message, links, type }) {
     const isUser = user.name === 'user';
     let text;
 
@@ -139,10 +182,12 @@ export default class Chat {
         </div>
       </div>
     `;
-    this.messagesContainer.insertAdjacentHTML('beforeend', messageHTML);
+    const place = type === 'load' ? 'afterbegin' : 'beforeend'; 
+    this.messagesContainer.insertAdjacentHTML(place, messageHTML);
   }
 
   renderImg({ user, files, message }) {
+    console.log(message.type)
     const isUser = user.name === 'user';
     // debugger;
     const messageEl = document.createElement('div');
@@ -152,7 +197,10 @@ export default class Chat {
     messageEl.innerHTML = `
       <div class="message__container">
         <div class="message__content">
-          <div class="message__images"></div>
+          <div class="message__block">
+            <div class="message__files"></div>
+            ${message.text && `<p class="message__text">${message.text}</p>`}
+          </div>
           <p class="message__time">${message.date}</p>
         </div>
         <svg width="6" height="8" viewBox="0 0 6 8" fill="none" class="message__tail">
@@ -161,14 +209,15 @@ export default class Chat {
       </div>
     `;
     this.messagesContainer.append(messageEl);
-    this.imagesWrapper = messageEl.querySelector('.message__images');
+    this.filesWrapper = messageEl.querySelector('.message__files');
 
     files.forEach((file) => {
       const el = document.createElement('div');
-      el.classList.add('message__img');
+      el.classList.add('message__file', `${file.type.includes('video') && 'message__video'}`);
       el.setAttribute('data-id', file.id);
-      el.innerHTML = `<img src="${file.path}" alt="${file.fileName}">`;
-      this.imagesWrapper.append(el);
+      el.innerHTML = file.type.includes('image') ? `<img src=${file.path} alt=${file.fileName}>` 
+        : `<video src=${file.path}><video />`;
+      this.filesWrapper.append(el);
     });
   }
 

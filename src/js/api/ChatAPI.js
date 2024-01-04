@@ -6,7 +6,17 @@ export default class ChatAPI {
 
   // Подписываемя на события websocket
   subscribeOnEvents(callback) {
-    this.webSocket.addEventListener('open', () => console.log('open'));
+    this.webSocket.addEventListener('open', () => {
+      console.log('open'); 
+      if (this.webSocket.readyState === WebSocket.OPEN) {
+        this.webSocket.send(JSON.stringify({ 
+          type: 'load', 
+          user: {
+            name: 'user',
+          },
+        }))
+      }
+    });
     this.webSocket.addEventListener('message', (e) => {
       const data = JSON.parse(e.data);
       console.log(data);

@@ -101,7 +101,7 @@ body {
     max-width: 790px;
     display: flex;
     flex-direction: column;
-    margin: 0 auto;
+    margin: 1rem auto 0;
   }
   // .chat__bottombar
   &__bottombar {
@@ -224,25 +224,65 @@ body {
     left: -6px;
     transform: scaleX(-1);
     fill: #e8e3ef;
-    
   }
-  // .message__images
-  &__images {
-    max-width: 100%;
+  // message__block
+  &__block {
+    align-self: flex-end;
     display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  // .message__files
+  &__files {
+    max-width: 100%;
+    display: inline-flex;
     gap: 0.2rem;
     flex-wrap: wrap;
     padding: 0.2rem 0;
   }
-  // .message__img
-  &__img {
+  // .message__file
+  &__file {
+    // width: 100%;
     max-width: calc((100% - 0.8rem) / 5);
+    cursor: pointer;
     & img {
-      min-width: 100%;
       max-width: 100%;
+      min-width: 100%;
       min-height: 100%;
       max-height: 100%;
       object-fit: cover;
+    }
+    & video {
+      max-width: 100%;
+      min-width: 100%;
+      min-height: 100%;
+      max-height: 100%;
+      object-fit: cover;
+    }
+  }
+  // .message__video
+  &__video{
+    position: relative;
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba( #000, 0.4);
+      z-index: 5;
+    }
+    &::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 1.5rem;
+      height: 1.5rem;
+      background: center/ 100% 100% no-repeat url('../images/Play.svg');
+      z-index: 5;
     }
   }
 }
@@ -395,7 +435,7 @@ body {
   height: 100%;
   background-color: $backgorund-color-white;
   box-shadow: 0 0.25rem 0.5rem 0.1rem rgba(#000, .3);
-  z-index: 3;
+  z-index: 9000;
   transition: right .8s ease-in;
   &_hidden {
     right: -100%;
@@ -485,6 +525,7 @@ body {
   }
   // .storage__item
   &__item {
+    width: 100%;
     font-size: 1rem;
     @include flexSpace(row);
     gap: 0.6rem;
@@ -499,19 +540,67 @@ body {
       text-decoration: underline;
     }
   }
-  // .storage__file
-  &__file {
+  // .storage__media
+  &__media {
     max-width: calc((100% - 1.2rem) / 4);
+    cursor: pointer;
+    &:hover{
+      filter: brightness(80%)
+    }
   }
   // .storage__img
   &__img {
+    width: 100%;
+    height: 6rem;
     & img {
-      max-width: 100%;
+      width: 100%;
+      height: 100%;
       object-fit: cover;
     }
-    // :hover {
-    //   text-decoration: underline;
-    // }
+    & video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+  // .storage__file
+  &__file {
+      width: 3rem;
+      height: 3rem;
+      position: relative;
+      &::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        background: center / 1.3rem 1.3rem no-repeat url('../images/Download.svg');
+        z-index: 2;
+      }
+    & img, & video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+  // .storage__download
+  &__download {
+    transition: opacity 0.3s;
+    z-index: 100;
+    &:hover .storage__file::after {
+      background: rgba( #000, 0.4) center / 1.3rem 1.3rem no-repeat url('../images/Download.svg');
+      opacity: 1;
+      transition: opacity 0.3s;
+    }
+  }
+  // .storage__file-desc 
+  &__file-desc {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
   }
   // .storage__date
   &__date {
@@ -520,12 +609,10 @@ body {
 }
 .storage-media{
   flex-direction: row;
-  // display: flex;
   flex-wrap: wrap;
   gap: 0.4rem;
 }
 .tabs {
-  
   // .tabs__container
   &__container {
     @include flexSpace(row);
@@ -571,7 +658,7 @@ body {
   height: 100%;
   background: rgba(#000, 0.50);
   @include flexCenter(row);
-  z-index: 999;
+  z-index: 99999;
   // .popover__container
   &__container {
     background-color: $backgorund-color-white;
@@ -611,6 +698,12 @@ body {
       flex-shrink: 1;
       max-width: 100%;
       max-height: 100%;
+      object-fit: cover;
+    }
+    & video {
+      // aspect-ratio: 16 / 9;
+      max-width: 100%;
+      max-height: 300px;
       object-fit: cover;
     }
   }
