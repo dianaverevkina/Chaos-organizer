@@ -15,19 +15,22 @@ export default class Sidebar {
     this.addEvents();
   }
 
+  // Добавляем обработчики событий
   addEvents() {
     this.bntCloseSidebar.addEventListener('click', (e) => this.closeSidebar(e));
     this.tabs.addEventListener('click', (e) => this.loadStorage(e));
   }
 
+  // Закрываем sidebar
   closeSidebar(e) {
     e.preventDefault();
     this.container.classList.add('sidebar_hidden');
   }
 
+  // Загружаем данные хранилища
   loadStorage(e) {
     e.preventDefault();
-    // debugger;
+
     const { target } = e;
     const tab = target.closest('.tabs__tab');
 
@@ -39,24 +42,22 @@ export default class Sidebar {
     const { name } = tab.dataset;
     this.api.list(name, (response) => {
       this.storage.innerHTML = '';
-      console.log(response);
+  
       if (response.links) {
-        // debugger;
         response.links.forEach((link) => this.showLinks(link));
       }
       if (response.media) {
-        console.log('files')
         if (!response.media) return;
         response.media.forEach((file) => this.showMedia(file));
       }
       if (response.files) {
-        console.log('files')
         if (!response.files) return;
         response.files.forEach((file) => this.showFiles(file));
       }
     });
   }
 
+  // Отображаем ссылки в хранилище
   showLinks(item) {
     const el = document.createElement('div');
     el.classList.add('storage__item');
@@ -66,11 +67,10 @@ export default class Sidebar {
     `;
 
     this.storage.prepend(el);
-    // this.api.getLinkInfo(item);
   }
 
+  // Отображаем медиа в хранилище
   showMedia(item) {
-    console.log(item)
     this.storage.classList.add('storage-media');
     const el = document.createElement('div');
     el.classList.add('storage__item', 'storage__media');
@@ -83,10 +83,11 @@ export default class Sidebar {
     this.storage.prepend(el);
   }
 
+  // Создаем элемент файла
   createFileElement(type, url, fileName) {
     const regExForFileExtension = /\.([^.]+)$/;
     const extension = fileName.match(regExForFileExtension)[1];
-   console.log(fileName)
+
     if (type.includes('video')) {
       return `<video src=${url}><video />`;
     }
@@ -98,6 +99,7 @@ export default class Sidebar {
     }
   }
 
+  // Отображаем файлы в хранилище
   showFiles(item) {
     const el = document.createElement('a');
     el.classList.add('storage__item', 'storage__download');

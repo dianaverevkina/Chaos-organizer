@@ -5,14 +5,14 @@ export default class SidebarApi {
     this.url = 'http://localhost:3000';
   }
 
-  // Отправляем запрос на получение инстансов
+  // Отправляем запрос на получение данных хранилища
   list(tabName, callback) {
     createRequest({
       url: `${this.url}/${tabName}`,
       method: 'GET',
     })
       .then((result) => {
-        console.log(result); callback(result);
+        callback(result);
       })
       .catch((e) => {
         console.error('Произошла ошибка: ', e);

@@ -7,6 +7,7 @@ export default class Popover {
     this.api = new ChatAPI();
   }
 
+  // Показываем popover с превью файлов
   showPopover(files) {
     this.drawPopover();
 
@@ -23,6 +24,7 @@ export default class Popover {
     [...this.files].forEach((file) => this.createPreviewFile(file));
   }
 
+  // Рендерим popover
   drawPopover() {
     this.popover = document.createElement('div');
     this.popover.classList.add('popover');
@@ -46,6 +48,7 @@ export default class Popover {
     document.body.append(this.popover);
   }
 
+  // Добавляем обработчики событий
   addEvents() {
     this.btnClose.addEventListener('click', (e) => {
       e.preventDefault();
@@ -56,7 +59,8 @@ export default class Popover {
     this.form.addEventListener('submit', (e) => this.sendFiles(e));
   }
 
-  defineFileType(type, url, name) {
+  // Создаем элемент файла
+  createFileEl(type, url, name) {
     switch (true) {
       case type.includes('image'):
         return `
@@ -97,21 +101,10 @@ export default class Popover {
 
     const preview = document.createElement('div');
     preview.classList.add('popover__file-preview');
-    // debugger
-    preview.innerHTML = this.defineFileType(type, url, name);
-    console.log(preview.innerHTML)
+    preview.innerHTML = this.createFileEl(type, url, name);
   
     this.filesContainer.append(preview);
 
-    // if (type.includes('video')) {
-    //   this.defineDuration('video', preview);
-    // }
-
-    // if (type.includes('audio')) {
-    //   this.defineDuration('audio', preview);
-    // }
-
-    // // debugger;
     const sendFile = {
       path: url,
       name,
@@ -122,12 +115,13 @@ export default class Popover {
     this.filesForSend.push(sendFile);
   }
 
+  // Отправляем файлы на сервер
   sendFiles(e) {
     e.preventDefault();
     this.popover.remove();
     this.popover = null;
     let caption = this.inputFileDesc.value;
-    // debugger;
+
     const data = {
       type: 'file',
       user: {

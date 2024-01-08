@@ -61,12 +61,34 @@ export default class Chat {
     this.addScrollEvent();
   }
 
+  // Открываем Sidebar
   showSidebar(e) {
     e.preventDefault();
     const sidebar = document.querySelector('.sidebar');
     sidebar.classList.remove('sidebar_hidden');
   }
 
+  // При скролле контейнера с сообщениями подгружаем новые сообщения
+  scrollMessages() {
+    const lastMessage = this.messagesContainer.querySelector('.message')
+    const data = {
+      type: 'load',
+      index: lastMessage.dataset.id,
+    };
+  
+    this.api.webSocket.send(JSON.stringify(data));
+  }
+
+  // Добавляем событие скролла
+  addScrollEvent() {
+    this.messagesContainer.addEventListener('scroll', () => {
+      if (this.messagesContainer.scrollTop === 0) {
+        this.scrollMessages();
+      }
+    });
+  }
+
+  // Отправляем сообщение при нажатии Enter или кнопки с "самолетиком"
   sendMessage(e) {
     e.preventDefault();
     const message = this.inputMessage.value;
@@ -88,6 +110,7 @@ export default class Chat {
     this.inputMessage.value = '';
   }
 
+  // Поиск ссылок в текстовом сообщении
   searchLinks(text) {
     const regex = /(\bhttps?:\/\/\S+\b)/g;
     const fragments = text.split(regex);
@@ -105,6 +128,7 @@ export default class Chat {
     return links;
   }
 
+  // Заменяем текстовые ссылки на кликабельные
   replaceLinks(text) {
     // Регулярное выражение для поиска ссылок
     const regex = /(\bhttps?:\/\/\S+\b)/g;
@@ -114,25 +138,8 @@ export default class Chat {
 
     return textWithLinks;
   }
-  
-  scrollMessages() {
-    const lastMessage = this.messagesContainer.querySelector('.message')
-    const data = {
-      type: 'load',
-      index: lastMessage.dataset.id,
-    };
-  
-    this.api.webSocket.send(JSON.stringify(data));
-  }
 
-  addScrollEvent() {
-    this.messagesContainer.addEventListener('scroll', () => {
-      if (this.messagesContainer.scrollTop === 0) {
-        this.scrollMessages();
-      }
-    });
-  }
-
+  // Создаем сообщение в зависимости от типа
   createMessage(data) {
     if (data.type === 'load') {
       data.savedMessages.forEach(mes => {
@@ -158,6 +165,7 @@ export default class Chat {
     this.scrollChat();
   }
 
+  // Шаблон для сообщений
   createMessageTemplate(user, block, message, load) {
     const { id, date } = message;
     const isUser = user.name === 'user';
@@ -186,6 +194,7 @@ export default class Chat {
     return messageEl;
   }
 
+  // Рендерим текстовое сообщение
   renderMessage(mes, load) {
     const { user, message, links } = mes;
     let text;
@@ -200,6 +209,7 @@ export default class Chat {
     this.createMessageTemplate(user, block, message, load);
   }
 
+  // Создаем HTML элемент файл
   createFileEl(file, filesContainer) {
     const { id, type, path, fileName } = file;
     const el = document.createElement('div');
@@ -219,10 +229,11 @@ export default class Chat {
         <audio class="file-audio" src=${path} controls></audio>
       `;
     }
-    
+
     filesContainer.append(el);
   }
 
+  // Рендерим сообщение, содержащее файлы
   renderFile(mes, load) {
     const { user, files, message } = mes;
     const block = `
@@ -238,6 +249,7 @@ export default class Chat {
     files.forEach((file) => this.createFileEl(file, this.filesWrapper));
   }
 
+  // Показываем окно для загрузки файла
   showPlaceholderForFile(e) {
     e.preventDefault();
     if (this.placeholderForFiles) return;
@@ -255,6 +267,7 @@ export default class Chat {
     this.chatContainer.append(this.placeholderForFiles);
   }
 
+  // Показываем окно с превью файлов
   showPopoverWithPreviews(e) {
     e.preventDefault();
     const { files } = e.dataTransfer;
