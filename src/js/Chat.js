@@ -21,7 +21,6 @@ export default class Chat {
     this.bindToDOM();
     this.registerEvents();
     this.api.subscribeOnEvents(this.createMessage);
-    // this.scrollChat();
   }
 
   bindToDOM() {
@@ -120,9 +119,6 @@ export default class Chat {
     const lastMessage = this.messagesContainer.querySelector('.message')
     const data = {
       type: 'load',
-      user: {
-        name: 'user',
-      },
       index: lastMessage.dataset.id,
     };
   
@@ -139,8 +135,13 @@ export default class Chat {
 
   createMessage(data) {
     if (data.type === 'load') {
-      console.log(data.messages)
-      data.messages.forEach(mes => this.renderMessage({message: mes, user: data.user, links: [], type: data.type}));
+      data.savedMessages.forEach(mes => {
+        if (mes.type === 'textMessage') {
+          this.renderMessage(mes, 'load');
+        } else {
+          this.renderFile(mes, 'load');
+        }
+      });
       if (this.start) {
         this.scrollChat();
         this.start = false;
@@ -148,19 +149,45 @@ export default class Chat {
       return;
     }
     if (data.type === 'textMessage') {
-      console.log(data)
       this.renderMessage(data);
     }
     if (data.type === 'file') {
-      console.log(data);
-      this.renderImg(data);
+      this.renderFile(data);
     }
 
     this.scrollChat();
   }
 
-  renderMessage({ user, message, links, type }) {
+  createMessageTemplate(user, block, message, load) {
+    const { id, date } = message;
     const isUser = user.name === 'user';
+    const messageEl = document.createElement('div');
+    messageEl.setAttribute('data-id', id);
+    const additionalClass = isUser ? 'message-user' : '';
+    messageEl.classList.add('message', additionalClass);
+    messageEl.innerHTML = `
+      <div class="message__container">
+        <div class="message__content">
+          ${block}
+          <p class="message__time">${date}</p>
+        </div>
+        <svg width="6" height="8" viewBox="0 0 6 8" fill="none" class="message__tail">
+          <path d="M5.51475 6.81291C3.16611 5.49945 0 3.14549 0 6.97374e-06V8.00001L5.24113 8.00001C5.79778 8.00001 6.00058 7.08461 5.51475 6.81291Z"/>
+        </svg>
+      </div>
+    `;
+
+    if (load) {
+      this.messagesContainer.prepend(messageEl);
+    } else {
+      this.messagesContainer.append(messageEl);
+    }
+
+    return messageEl;
+  }
+
+  renderMessage(mes, load) {
+    const { user, message, links } = mes;
     let text;
 
     if (links.length >= 0) {
@@ -169,56 +196,46 @@ export default class Chat {
       text = message.text;
     }
 
-    const messageHTML = `
-      <div class="message ${isUser ? 'message-user' : ''}" data-id="${message.id}">
-        <div class="message__container">
-          <div class="message__content">
-            <p class="message__text">${text}</p>
-            <p class="message__time">${message.date}</p>
-          </div>
-          <svg width="6" height="8" viewBox="0 0 6 8" fill="none" class="message__tail">
-            <path d="M5.51475 6.81291C3.16611 5.49945 0 3.14549 0 6.97374e-06V8.00001L5.24113 8.00001C5.79778 8.00001 6.00058 7.08461 5.51475 6.81291Z"/>
-          </svg>
-        </div>
-      </div>
-    `;
-    const place = type === 'load' ? 'afterbegin' : 'beforeend'; 
-    this.messagesContainer.insertAdjacentHTML(place, messageHTML);
+    const block = `<p class="message__text">${text}</p>`;
+    this.createMessageTemplate(user, block, message, load);
   }
 
-  renderImg({ user, files, message }) {
-    console.log(message.type)
-    const isUser = user.name === 'user';
-    // debugger;
-    const messageEl = document.createElement('div');
-    messageEl.setAttribute('data-id', message.id);
-    const additionalClass = isUser ? 'message-user' : '';
-    messageEl.classList.add('message', additionalClass);
-    messageEl.innerHTML = `
-      <div class="message__container">
-        <div class="message__content">
-          <div class="message__block">
-            <div class="message__files"></div>
-            ${message.text && `<p class="message__text">${message.text}</p>`}
-          </div>
-          <p class="message__time">${message.date}</p>
-        </div>
-        <svg width="6" height="8" viewBox="0 0 6 8" fill="none" class="message__tail">
-          <path d="M5.51475 6.81291C3.16611 5.49945 0 3.14549 0 6.97374e-06V8.00001L5.24113 8.00001C5.79778 8.00001 6.00058 7.08461 5.51475 6.81291Z"/>
-        </svg>
+  createFileEl(file, filesContainer) {
+    const { id, type, path, fileName } = file;
+    const el = document.createElement('div');
+    const additionalClass = `${((type.includes('video') && 'message__video') || (file.type.includes('audio') && 'message__audio')) || 'message__img'}`
+    el.classList.add('message__file', additionalClass);
+    el.setAttribute('data-id', id);
+
+    if (file.type.includes('image')) {
+      el.innerHTML = `<img src=${path} alt=${fileName}>`;
+    }
+    if (file.type.includes('video')) {
+      el.innerHTML = `<video src=${path}><video />`;
+    }
+    if (file.type.includes('audio')) {
+      el.innerHTML = `
+        <p>${fileName}</p>
+        <audio class="file-audio" src=${path} controls></audio>
+      `;
+    }
+    
+    filesContainer.append(el);
+  }
+
+  renderFile(mes, load) {
+    const { user, files, message } = mes;
+    const block = `
+      <div class="message__block">
+        <div class="message__files"></div>
+        ${message.text && `<p class="message__text">${message.text}</p>`}
       </div>
     `;
-    this.messagesContainer.append(messageEl);
+    const messageEl = this.createMessageTemplate(user, block, message, load);
+
     this.filesWrapper = messageEl.querySelector('.message__files');
 
-    files.forEach((file) => {
-      const el = document.createElement('div');
-      el.classList.add('message__file', `${file.type.includes('video') && 'message__video'}`);
-      el.setAttribute('data-id', file.id);
-      el.innerHTML = file.type.includes('image') ? `<img src=${file.path} alt=${file.fileName}>` 
-        : `<video src=${file.path}><video />`;
-      this.filesWrapper.append(el);
-    });
+    files.forEach((file) => this.createFileEl(file, this.filesWrapper));
   }
 
   showPlaceholderForFile(e) {

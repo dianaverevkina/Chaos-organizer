@@ -20,7 +20,7 @@ export default class Popover {
     this.files = [...files];
     this.filesForSend = [];
 
-    [...this.files].forEach((file) => this.createImageFile(file));
+    [...this.files].forEach((file) => this.createPreviewFile(file));
   }
 
   drawPopover() {
@@ -56,24 +56,67 @@ export default class Popover {
     this.form.addEventListener('submit', (e) => this.sendFiles(e));
   }
 
-  // Создаем картинку
-  createImageFile(file) {
+  defineFileType(type, url, name) {
+    switch (true) {
+      case type.includes('image'):
+        return `
+          <div class="popover__file-img">
+            <img src="${url}" alt="">
+          </div>
+        `;
+      case type.includes('video'):
+        return `
+          <div class="popover__file-video">
+            <video class="file-video" src="${url}" controls></video>
+          </div>
+        `;
+      case type.includes('audio'):
+        return `
+          <div class="popover__file-audio">
+            <p>${name}</p>
+            <audio class="file-audio" src="${url}" controls></audio>
+          </div>
+        `;
+      default:
+        return null;
+    }
+  }
+
+  defineDuration(type, el) {
+    this.elementFile = el.querySelector(`.file-${type}`);
+    this.elementFile.addEventListener('loadedmetadata', () => {
+      console.log('Длительность:', this.elementFile.duration + ' секунд');
+    });
+  }
+
+  // Создаем превью файла
+  createPreviewFile(file) {
     console.log(file);
     const url = URL.createObjectURL(file);
+    const { type, name, size } = file;
 
     const preview = document.createElement('div');
     preview.classList.add('popover__file-preview');
-    preview.innerHTML = file.type.includes('image') ? `<img src="${url}" alt="">` 
-      : `<video src="${url}" controls ><video />`;
+    // debugger
+    preview.innerHTML = this.defineFileType(type, url, name);
+    console.log(preview.innerHTML)
   
     this.filesContainer.append(preview);
+
+    // if (type.includes('video')) {
+    //   this.defineDuration('video', preview);
+    // }
+
+    // if (type.includes('audio')) {
+    //   this.defineDuration('audio', preview);
+    // }
 
     // // debugger;
     const sendFile = {
       path: url,
-      name: file.name,
-      type: file.type,
-      size: file.size,
+      name,
+      type,
+      size,
     };
 
     this.filesForSend.push(sendFile);

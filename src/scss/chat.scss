@@ -285,6 +285,14 @@ body {
       z-index: 5;
     }
   }
+  // .message__audio
+  &__audio {
+    max-width: 100%;
+    flex-direction: column;
+    & audio {
+      max-width: 100%;
+    }
+  }
 }
 
 .message-user {
@@ -430,8 +438,8 @@ body {
   position: absolute;
   top: 0;
   right: 0;
-  min-width: 420px;
-  max-width: 420px;
+  min-width: 480px;
+  max-width: 480px;
   height: 100%;
   background-color: $backgorund-color-white;
   box-shadow: 0 0.25rem 0.5rem 0.1rem rgba(#000, .3);
@@ -565,9 +573,10 @@ body {
   }
   // .storage__file
   &__file {
-      width: 3rem;
-      height: 3rem;
+      width: 4rem;
+      height: 3.6rem;
       position: relative;
+      border-radius: 0.4rem;
       &::after {
         content: '';
         position: absolute;
@@ -577,6 +586,7 @@ body {
         height: 100%;
         opacity: 0;
         background: center / 1.3rem 1.3rem no-repeat url('../images/Download.svg');
+        border-radius: 0.4rem;
         z-index: 2;
       }
     & img, & video {
@@ -594,6 +604,17 @@ body {
       opacity: 1;
       transition: opacity 0.3s;
     }
+  }
+  // .storage__file-extension 
+  &__file-extension {
+    color: white;
+    max-width: 100%;
+    height: 100%;
+    @include flexCenter(row);
+    background-color: $button-background-color-green;
+    border-radius: 0.4rem;
+    word-wrap: break-word;
+    hyphens: auto;
   }
   // .storage__file-desc 
   &__file-desc {
@@ -694,23 +715,51 @@ body {
   &__file-preview {
     max-width: 100%;
     @include flexCenter(row);
+  }
+  // .popover__file-img
+  &__file-img {
     & img {
       flex-shrink: 1;
       max-width: 100%;
       max-height: 100%;
       object-fit: cover;
     }
+  }
+  // .popover__file-video
+  &__file-video {
     & video {
-      // aspect-ratio: 16 / 9;
       max-width: 100%;
       max-height: 300px;
       object-fit: cover;
+    }
+  }
+  // .popover__file-audio
+  &__file-audio {
+    display: flex;
+    flex-direction: column;
+    & p {
+      padding: 0rem;
+    }
+    & audio::-webkit-media-controls-panel {
+      background-color: #fff;
+      padding: 0;
+      margin: 0;
+    }
+    & audio::-webkit-media-controls-play-button {
+      background-color: $button-background-color-green;
+      border-radius: 50%;
+      transition: 0.3s;
+      &:hover {
+        background-color: #155d54;
+        transition: 0.3s;
+      }
     }
   }
   // .popover__form
   &__form {
   }
 }
+
 .form {
   min-width: 20rem;
   max-width: 25rem;

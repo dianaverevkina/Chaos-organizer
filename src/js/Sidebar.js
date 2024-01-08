@@ -83,16 +83,30 @@ export default class Sidebar {
     this.storage.prepend(el);
   }
 
+  createFileElement(type, url, fileName) {
+    const regExForFileExtension = /\.([^.]+)$/;
+    const extension = fileName.match(regExForFileExtension)[1];
+   console.log(fileName)
+    if (type.includes('video')) {
+      return `<video src=${url}><video />`;
+    }
+    if (type.includes('image')) {
+      return `<img src=${url} />`;
+    }
+    if (type.includes('audio')) {
+      return `<p class="storage__file-extension">${extension}</p>`;
+    }
+  }
+
   showFiles(item) {
     const el = document.createElement('a');
     el.classList.add('storage__item', 'storage__download');
     el.href = item.path;
-    el.download = true;
+    el.download = item.fileName;
     el.innerHTML = `
       
       <div class="storage__file">
-        ${item.type.includes('video') ? `<video src=${item.path}><video />` : `<img src=${item.path} />`}
-      
+       ${this.createFileElement(item.type, item.path, item.fileName)}
       </div>
       <div class="storage__file-desc">
         <p>${item.fileName}</p>

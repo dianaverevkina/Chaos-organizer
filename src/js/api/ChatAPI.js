@@ -9,12 +9,7 @@ export default class ChatAPI {
     this.webSocket.addEventListener('open', () => {
       console.log('open'); 
       if (this.webSocket.readyState === WebSocket.OPEN) {
-        this.webSocket.send(JSON.stringify({ 
-          type: 'load', 
-          user: {
-            name: 'user',
-          },
-        }))
+        this.webSocket.send(JSON.stringify({ type: 'load' }));
       }
     });
     this.webSocket.addEventListener('message', (e) => {
