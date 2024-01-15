@@ -42,7 +42,7 @@ export default class Sidebar {
     const { name } = tab.dataset;
     this.api.list(name, (response) => {
       this.storage.innerHTML = '';
-  
+  console.log(response)
       if (response.links) {
         response.links.forEach((link) => this.showLinks(link));
       }
@@ -53,6 +53,11 @@ export default class Sidebar {
       if (response.files) {
         if (!response.files) return;
         response.files.forEach((file) => this.showFiles(file));
+      }
+      if (response.audio) {
+        if (!response.audio) return;
+        console.log(response)
+        response.audio.forEach((file) => this.showAudio(file));
       }
     });
   }
@@ -78,6 +83,22 @@ export default class Sidebar {
       <div class="storage__img">
         ${item.type.includes('video') ? `<video src=${item.path}><video />` : `<img src=${item.path} src=${item.path}/>`}
       </div>
+    `;
+
+    this.storage.prepend(el);
+  }
+
+  // Отображаем аудио файлы в хранилище
+  showAudio(item) {
+    console.log(item)
+    const el = document.createElement('div');
+    el.classList.add('storage__item');
+    el.innerHTML = `
+      <div class="storage__audio">
+        <p>${item.fileName}</p>
+        <audio src=${item.path} controls></audio>
+      </div>
+      <p class="storage__date">${item.date}</p>
     `;
 
     this.storage.prepend(el);

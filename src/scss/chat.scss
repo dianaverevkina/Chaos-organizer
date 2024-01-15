@@ -38,8 +38,21 @@ body {
   font-weight: $fw;
   color: $text-color-black;
   background-color: $main-background-beige;
+  position: relative;
   // scrollbar-width: none;
   // scrollbar-color: transparent transparent;  
+}
+
+em-emoji-picker {
+  display: none;
+  position: absolute;
+  top: 0;
+  right: 0;
+  transform: translate(0, -101%);
+  max-height: 20rem;
+  &.active {
+    display: flex;
+  }
 }
 
 .root {
@@ -101,7 +114,7 @@ body {
     max-width: 790px;
     display: flex;
     flex-direction: column;
-    margin: 1rem auto 0;
+    margin: 0 auto 0;
   }
   // .chat__bottombar
   &__bottombar {
@@ -177,12 +190,23 @@ body {
   // .messages__container
   &__container {
     display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 2rem;
-  padding: 0 0.8125rem 2rem;
-  overflow-y: auto;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2rem;
+    padding: 0.8rem 0.8125rem 2rem;
+    overflow-y: auto;
   }
+}
+.pinned-message {
+  @include flexSpace(row);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background-color: #d1e3e2;
+  padding: 0.5rem 1rem;
+  // box-shadow: 0px 0px 10px rgba(#000, 0.3);
+  
 }
 .message {
   max-width: 65%;
@@ -209,11 +233,30 @@ body {
     color: $message-link-text-color;
     text-decoration: underline;
   }
+  // .message__info
+  &__info {
+    align-self: flex-end;
+    @include flexSpace(row);
+    gap: 0.2rem;
+  }
   // .message__time
   &__time {
     font-size: 0.75rem;
-    align-self: flex-end;
-    padding: 0.5rem 0 0;
+    // padding: 0.5rem 0 0;
+  }
+  // .message__pinned
+  &__pinned {
+    opacity: 0;
+    visibility: hidden;
+    width: 0.7rem;
+    @include flexCenter(row);
+    & img {
+      max-width: 100%;
+    }
+    &_visible {
+      opacity: 1;
+      visibility: visible;
+    }
   }
   // .message__tail
   &__tail {
@@ -293,6 +336,20 @@ body {
       max-width: 100%;
     }
   }
+  // .message__context-menu
+  &__context-menu {
+
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 274px;
+    background-color: $backgorund-color-white;
+    color: $text-color-black;
+    border-radius: 10px;
+    padding: 0.3rem;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, .15);
+    z-index: 1000;
+  }
 }
 
 .message-user {
@@ -323,6 +380,7 @@ body {
     border-radius: 0.75rem;
     background: $topbar-and-bottombar-background-grey;
     padding: 5px 8px;
+    position: relative;
   }
   // .bottombar__input-file
   &__input-file {
